@@ -9,9 +9,11 @@
     <input type="text" class="form-control" placeholder="Search" aria-label="Search" name="q" value="{{request.GET.q}}">
     <div class="input-group-append">
       <button class="btn btn-outline-secondary" type="submit">Search</button>
+
     </div>
   </div>
 </form>
+
 <div class="row">
     {% for restaurant in restaurants %}
     <div class="col-md-4">
@@ -20,6 +22,8 @@
             <img class="card-img-top" src="{{restaurant.logo.url}}" alt="Hey Noob, look at me...">
           {% endif %}
           <div class="card-body">
+            <h5><button  id="{{restaurant.id}}" class=" btn btn-light  {% if restaurant.id in favorite_restaurants %} text-danger {% endif %}" onClick="restaurant_favorite({{restaurant.id}})"><i class="fas fa-heart"></i></button> 
+            </h5>
             <h5 class="card-title">{{restaurant.name}}</h5>
             <p class="card-text">{{restaurant.description|truncatechars:25}}</p>
           </div>
@@ -32,5 +36,30 @@
     </div>
     {% endfor %}
 </div>
+<script type="text/javascript">
+function restaurant_favorite(id) {
+    let button_id = "#"+id;
+    $.ajax(
+        {
+            type:'GET',
+            url: '/restaurants/'+id+'/favorite/',
+            success: function(data){ 
+              if(data.favorite){
+                $(button_id).addClass('text-danger');
+              }else{
+                $(button_id).removeClass('text-danger')
+                }
+              },  
+              error: function(){
+                console.log('error');
+            },
+            
+            })
+        }
+    
+
+</script>
+
+
 {% endblock content %}
 

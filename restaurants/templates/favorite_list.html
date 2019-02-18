@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}List{% endblock title %}
+
+{% block content %}
+
+<div class="row">
+    {% for restaurant in favorited_restaurants %}
+    <div class="col-md-4">
+        <div class="card my-card">
+          {% if restaurant.restaurant.logo %}
+            <img class="card-img-top" src="{{restaurant.restaurant.logo.url}}" alt="Hey Noob, look at me...">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{restaurant.restaurant.name}}</h5>
+            <p class="card-text">{{restaurant.restaurant.description|truncatechars:25}}</p>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item text-center">
+                <a href="{% url 'restaurant-detail' restaurant.restaurant.id %}" class="btn btn-outline-dark">View</a>
+                <button id="{{restaurant.restaurant.id}}" onClick="favorite_res({{restaurant.restaurant.id}})" class="btn btn-outline-dark text-warning"><i class="fas fa-star"></i></button>
+            </li>
+            
+          </ul>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<script type="text/javascript">
+  function favorite_res(id){
+    let fav = '#'+id
+    $.ajax({
+      type: "GET",
+      url: '/restaurants/' + id +'/favorite/',
+      success: function(data){
+        if(data.favorited){
+          $(fav).addClass('text-warning');
+        }else{
+          $(fav).removeClass('text-warning')
+        }
+        
+      },
+      error: function(){
+        console.log("NOOOOO")
+      }
+    });
+  }
+</script>
+{% endblock content %}
